@@ -72,6 +72,7 @@ function renderReports() {
   $$('.report-print').forEach(button => button.addEventListener('click', () => printStudent(button.dataset.id)));
 }
 function render() { populateClassFilters(); renderMetrics(); renderTables(); renderReports(); }
+function renderToday() { $('#todayLabel').textContent = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(new Date()); }
 function openModal(id = null) {
   const student = students.find(item => item.id === id);
   $('#studentForm').reset(); $('#studentId').value = id || ''; $('#modalTitle').textContent = student ? 'Edit student' : 'Add student'; $('#modalEyebrow').textContent = student ? 'Student record' : 'New record'; $('#deleteStudentBtn').hidden = !student;
@@ -104,4 +105,4 @@ $('#closeModal').addEventListener('click', closeModal); $('#cancelModal').addEve
 $('#resetFilters').addEventListener('click', () => { $('#studentSearch').value = ''; $('#classFilter').value = 'all'; $('#statusFilter').value = 'all'; renderTables(); });
 $('#exportCsvTop').addEventListener('click', exportCsv); $('#printClassBtn').addEventListener('click', printClass); $('#printReportsBtn').addEventListener('click', printClass); $('#viewReportsBtn').addEventListener('click', () => switchView('reports')); $('#viewAllStudents').addEventListener('click', () => switchView('students'));
 $('#studentModal').addEventListener('click', event => { if (event.target.id === 'studentModal') closeModal(); });
-render();
+renderToday(); render();
