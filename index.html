@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A focused student result management dashboard for academic teams." />
+  <title>Scholara | Student Results</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#" aria-label="Scholara home">
+        <span class="brand-mark">S</span>
+        <span>scholara</span>
+      </a>
+      <div class="sidebar-label">Workspace</div>
+      <nav class="nav-list" aria-label="Main navigation">
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">⌂</span>Overview</button>
+        <button class="nav-item" data-view="students"><span class="nav-icon">◎</span>Students</button>
+        <button class="nav-item" data-view="reports"><span class="nav-icon">▤</span>Reports</button>
+      </nav>
+      <div class="sidebar-label">Manage</div>
+      <nav class="nav-list" aria-label="Management navigation">
+        <button class="nav-item" data-view="classes"><span class="nav-icon">▦</span>Classes</button>
+        <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span>Settings</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="school-card">
+          <div class="school-icon">N</div>
+          <div><strong>Northbridge</strong><small>Admin workspace</small></div>
+          <span class="more">•••</span>
+        </div>
+        <div class="profile-card">
+          <div class="avatar avatar-indigo">AR</div>
+          <div><strong>Alex Rivera</strong><small>Administrator</small></div>
+          <button class="icon-btn" aria-label="Open account menu">⌄</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>Workspace</span><b>/</b><strong id="breadcrumb-current">Overview</strong></div>
+        <div class="topbar-actions">
+          <button class="icon-btn notification" aria-label="Notifications">♢<i></i></button>
+          <button class="help-btn">?</button>
+          <button class="outline-btn" id="exportCsvTop"><span>⇩</span> Export data</button>
+          <button class="primary-btn" id="addStudentTop"><span>＋</span> Add student</button>
+        </div>
+      </header>
+
+      <section class="page-view active" id="overviewView">
+        <div class="page-heading">
+          <div><p class="eyebrow">Wednesday, September 24, 2025</p><h1>Good morning, Alex <span>✦</span></h1><p class="muted">Here’s the latest pulse on your students’ progress.</p></div>
+          <div class="heading-actions"><button class="outline-btn" id="printClassBtn"><span>▣</span> Class report</button><button class="primary-btn" id="addStudentHero">＋ Add student</button></div>
+        </div>
+
+        <div class="metric-grid">
+          <article class="metric-card peach"><div class="metric-top"><span>Total students</span><span class="metric-icon">◎</span></div><strong id="totalStudents">0</strong><div class="metric-foot"><span class="trend up">↗ 8.2%</span><span>vs last term</span></div></article>
+          <article class="metric-card blue"><div class="metric-top"><span>Average score</span><span class="metric-icon">◒</span></div><strong id="averageScore">0%</strong><div class="metric-foot"><span class="trend up">↗ 4.6%</span><span>vs last term</span></div></article>
+          <article class="metric-card green"><div class="metric-top"><span>Pass rate</span><span class="metric-icon">✓</span></div><strong id="passRate">0%</strong><div class="metric-foot"><span class="trend up">↗ 2.1%</span><span>vs last term</span></div></article>
+          <article class="metric-card lilac"><div class="metric-top"><span>At risk</span><span class="metric-icon">!</span></div><strong id="atRisk">0</strong><div class="metric-foot"><span class="trend down">↘ 1.4%</span><span>vs last term</span></div></article>
+        </div>
+
+        <div class="content-grid">
+          <article class="panel chart-panel"><div class="panel-heading"><div><h2>Performance overview</h2><p class="muted">Average student score across subjects</p></div><select id="chartPeriod" class="select compact"><option>Last 6 months</option><option>This term</option></select></div><div class="chart-wrap"><div class="y-labels"><span>100</span><span>75</span><span>50</span><span>25</span><span>0</span></div><div class="chart-area"><div class="grid-lines"><i></i><i></i><i></i><i></i><i></i></div><svg class="line-chart" viewBox="0 0 660 230" preserveAspectRatio="none" aria-label="Performance trend chart"><defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6171e8" stop-opacity=".22"/><stop offset="1" stop-color="#6171e8" stop-opacity="0"/></linearGradient></defs><path class="chart-fill" d="M0,145 C50,136 76,148 108,124 S160,111 194,126 S246,83 278,99 S332,112 360,76 S414,55 447,79 S494,98 528,58 S587,33 620,45 S646,26 660,16 L660,230 L0,230 Z"/><path class="chart-line" d="M0,145 C50,136 76,148 108,124 S160,111 194,126 S246,83 278,99 S332,112 360,76 S414,55 447,79 S494,98 528,58 S587,33 620,45 S646,26 660,16"/><circle cx="528" cy="58" r="5" class="chart-dot"/></svg><div class="x-labels"><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></div></div></div></article>
+          <article class="panel breakdown-panel"><div class="panel-heading"><div><h2>Grade breakdown</h2><p class="muted">Current class distribution</p></div><button class="icon-btn" aria-label="More grade breakdown options">•••</button></div><div class="donut-row"><div class="donut" id="gradeDonut"><div><strong id="donutValue">0%</strong><span>avg. score</span></div></div><div class="legend" id="gradeLegend"></div></div><div class="panel-footer"><span>Updated just now</span><button class="text-btn" id="viewReportsBtn">View reports <span>→</span></button></div></article>
+        </div>
+
+        <section class="panel students-panel"><div class="panel-heading"><div><h2>Student results</h2><p class="muted">Review and manage the latest results</p></div><button class="text-btn" id="viewAllStudents">View all students <span>→</span></button></div><div class="toolbar"><label class="search-box"><span>⌕</span><input id="studentSearch" type="search" placeholder="Search by name or roll number..." /></label><select class="select" id="classFilter"><option value="all">All classes</option></select><select class="select" id="statusFilter"><option value="all">All results</option><option value="pass">Passed</option><option value="fail">Needs attention</option></select><button class="filter-btn" id="resetFilters">↺ <span>Reset</span></button></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Roll number</th><th>Class</th><th>Average</th><th>Status</th><th></th></tr></thead><tbody id="studentTableBody"></tbody></table><div class="empty-state" id="emptyState" hidden>No students match these filters.</div></div><div class="table-pagination"><span id="resultCount">Showing 0 students</span><div><button class="page-btn" disabled>‹</button><button class="page-btn active">1</button><button class="page-btn" disabled>›</button></div></div></section>
+      </section>
+
+      <section class="page-view" id="studentsView"><div class="page-heading"><div><p class="eyebrow">Directory</p><h1>Students</h1><p class="muted">Keep every student record and result in one place.</p></div><button class="primary-btn" id="addStudentDirectory">＋ Add student</button></div><section class="panel students-panel standalone"><div class="toolbar"><label class="search-box"><span>⌕</span><input id="directorySearch" type="search" placeholder="Search students..." /></label><select class="select" id="directoryClassFilter"><option value="all">All classes</option></select><select class="select" id="directoryStatusFilter"><option value="all">All results</option><option value="pass">Passed</option><option value="fail">Needs attention</option></select></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Roll number</th><th>Class</th><th>Average</th><th>Status</th><th></th></tr></thead><tbody id="directoryTableBody"></tbody></table></div></section></section>
+      <section class="page-view" id="reportsView"><div class="page-heading"><div><p class="eyebrow">Exports</p><h1>Reports</h1><p class="muted">Create polished class and individual report cards.</p></div><button class="primary-btn" id="printReportsBtn">▣ Print class report</button></div><section class="report-grid" id="reportCards"></section></section>
+      <section class="page-view placeholder-view" id="classesView"><div class="placeholder-icon">▦</div><p class="eyebrow">Workspace</p><h1>Classes</h1><p class="muted">Class grouping is powered by each student's Grade / Class field.</p><button class="primary-btn" id="addClassStudent">＋ Add student</button></section>
+      <section class="page-view placeholder-view" id="settingsView"><div class="placeholder-icon">⚙</div><p class="eyebrow">Workspace</p><h1>Settings</h1><p class="muted">Your local workspace is ready. Data is stored securely in this browser.</p></section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="studentModal" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-header"><div><p class="eyebrow" id="modalEyebrow">New record</p><h2 id="modalTitle">Add student</h2></div><button class="close-btn" id="closeModal" aria-label="Close">×</button></div><form id="studentForm"><input type="hidden" id="studentId" /><div class="form-grid"><label>Full name<input id="fullName" required placeholder="e.g. Maya Thompson" /></label><label>Roll number / ID<input id="rollNumber" required placeholder="e.g. NB-024" /></label><label>Grade / Class<input id="grade" required placeholder="e.g. Grade 10" /></label><label>Section<input id="section" required placeholder="e.g. A" /></label><label>Email<input id="email" type="email" required placeholder="student@school.edu" /></label><label>Date of birth<input id="dateOfBirth" type="date" required /></label></div><div class="marks-heading"><div><h3>Subject marks</h3><p class="muted">Enter marks out of 100 to calculate the result automatically.</p></div><span class="marks-total" id="marksTotalPreview">0 / 400</span></div><div class="marks-grid"><label>Mathematics<input class="mark-input" data-subject="Mathematics" type="number" min="0" max="100" required /></label><label>Science<input class="mark-input" data-subject="Science" type="number" min="0" max="100" required /></label><label>English<input class="mark-input" data-subject="English" type="number" min="0" max="100" required /></label><label>History<input class="mark-input" data-subject="History" type="number" min="0" max="100" required /></label></div><div class="modal-actions"><button type="button" class="danger-btn" id="deleteStudentBtn" hidden>Delete record</button><span></span><button type="button" class="outline-btn" id="cancelModal">Cancel</button><button type="submit" class="primary-btn">Save record</button></div></form></section></div>
+  <div class="toast" id="toast" role="status"></div>
+  <div class="print-report" id="printReport"></div>
+  <script src="app.js"></script>
+</body>
+</html>
