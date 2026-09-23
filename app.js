@@ -67,6 +67,7 @@ function renderReports() {
 function render() { populateClassFilters(); renderMetrics(); renderTables(); renderReports(); }
 function applyTheme(themeMode) {
   const isDark = themeMode === 'dark';
+  document.documentElement.setAttribute('data-theme', themeMode);
   document.body.classList.toggle('dark-mode', isDark);
   const toggle = $('#themeToggle');
   const icon = toggle?.querySelector('.theme-toggle-icon');
