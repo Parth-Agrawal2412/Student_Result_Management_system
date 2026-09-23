@@ -1,13 +1,6 @@
-const STORAGE_KEY = 'scholara-students';
+const STORAGE_KEY = 'scholara-students-v2';
 const SUBJECTS = ['Mathematics', 'Science', 'English', 'History'];
-const seedStudents = [
-  { id: '1', fullName: 'Maya Thompson', rollNumber: 'NB-024', grade: 'Grade 10', section: 'A', email: 'maya.thompson@northbridge.edu', dateOfBirth: '2010-04-18', marks: { Mathematics: 92, Science: 88, English: 95, History: 84 } },
-  { id: '2', fullName: 'Liam Carter', rollNumber: 'NB-018', grade: 'Grade 10', section: 'A', email: 'liam.carter@northbridge.edu', dateOfBirth: '2010-09-03', marks: { Mathematics: 78, Science: 82, English: 74, History: 80 } },
-  { id: '3', fullName: 'Sofia Williams', rollNumber: 'NB-031', grade: 'Grade 9', section: 'B', email: 'sofia.williams@northbridge.edu', dateOfBirth: '2011-01-27', marks: { Mathematics: 68, Science: 72, English: 76, History: 61 } },
-  { id: '4', fullName: 'Ethan Brooks', rollNumber: 'NB-009', grade: 'Grade 10', section: 'B', email: 'ethan.brooks@northbridge.edu', dateOfBirth: '2010-12-12', marks: { Mathematics: 54, Science: 58, English: 62, History: 49 } },
-  { id: '5', fullName: 'Olivia Bennett', rollNumber: 'NB-042', grade: 'Grade 8', section: 'A', email: 'olivia.bennett@northbridge.edu', dateOfBirth: '2012-07-08', marks: { Mathematics: 96, Science: 91, English: 89, History: 94 } },
-  { id: '6', fullName: 'Noah Anderson', rollNumber: 'NB-027', grade: 'Grade 9', section: 'A', email: 'noah.anderson@northbridge.edu', dateOfBirth: '2011-05-20', marks: { Mathematics: 48, Science: 52, English: 45, History: 50 } }
-];
+const seedStudents = [];
 
 let students = JSON.parse(localStorage.getItem(STORAGE_KEY)) || seedStudents;
 let activeDirectory = false;
