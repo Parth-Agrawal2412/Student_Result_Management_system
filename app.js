@@ -65,6 +65,23 @@ function renderReports() {
   $$('.report-print').forEach(button => button.addEventListener('click', () => printStudent(button.dataset.id)));
 }
 function render() { populateClassFilters(); renderMetrics(); renderTables(); renderReports(); }
+function applyTheme(themeMode) {
+  const isDark = themeMode === 'dark';
+  document.body.classList.toggle('dark-mode', isDark);
+  const toggle = $('#themeToggle');
+  const icon = toggle?.querySelector('.theme-toggle-icon');
+  const text = toggle?.querySelector('.theme-toggle-text');
+  if (toggle && icon && text) {
+    icon.textContent = isDark ? '☾' : '☀';
+    text.textContent = isDark ? 'Dark' : 'Light';
+  }
+  localStorage.setItem('scholara-theme', themeMode);
+}
+function initializeTheme() {
+  const savedTheme = localStorage.getItem('scholara-theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(savedTheme || (prefersDark ? 'dark' : 'light'));
+}
 function renderToday() { $('#todayLabel').textContent = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(new Date()); }
 function updateChartPeriod(period) {
   const labels = period === 'This term' ? ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'] : ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
@@ -106,6 +123,11 @@ $('#notificationBtn').addEventListener('click', () => showToast('You have no new
 $('#helpBtn').addEventListener('click', () => showToast('Use Add student to create a record, then enter marks to calculate results.'));
 $('#accountBtn').addEventListener('click', () => showToast('Signed in as Administrator.'));
 $('#gradeOptionsBtn').addEventListener('click', () => showToast('Grade breakdown is calculated from all saved student results.'));
+$('#themeToggle').addEventListener('click', () => {
+  const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
+  applyTheme(nextTheme);
+});
 $('#chartPeriod').addEventListener('change', event => updateChartPeriod(event.target.value));
 $('#studentModal').addEventListener('click', event => { if (event.target.id === 'studentModal') closeModal(); });
+initializeTheme();
 renderToday(); render();
