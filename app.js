@@ -1,5 +1,9 @@
 const STORAGE_KEY = 'scholara-students-v2';
 const SUBJECTS = ['Mathematics', 'Science', 'English', 'History'];
+const CHART_DATA = {
+  'Last 6 months': [58, 62, 66, 74, 78, 88],
+  'This term': [64, 69, 73, 85, 81, 92]
+};
 const seedStudents = [];
 
 let students = JSON.parse(localStorage.getItem(STORAGE_KEY)) || seedStudents;
@@ -64,7 +68,43 @@ function renderReports() {
   $('#reportCards').innerHTML = students.map(student => { const result = resultFor(student); return `<article class="report-card"><div class="student-cell"><span class="student-avatar">${initials(student.fullName)}</span><span class="student-name">${student.fullName}<small>${student.rollNumber} · ${student.grade} ${student.section}</small></span></div><div class="report-stat"><span>Average score</span><strong>${formatAverage(result.percentage)}</strong></div><div class="report-stat"><span>Grade</span><strong>${result.grade}</strong></div><div class="report-stat"><span>Status</span><strong class="${result.status}">${result.status === 'pass' ? 'Passed' : 'Needs attention'}</strong></div><button class="outline-btn report-print" data-id="${student.id}">▣ Print report card</button></article>`; }).join('');
   $$('.report-print').forEach(button => button.addEventListener('click', () => printStudent(button.dataset.id)));
 }
-function render() { populateClassFilters(); renderMetrics(); renderTables(); renderReports(); }
+function render() {
+  populateClassFilters();
+  renderMetrics();
+  renderTables();
+  renderReports();
+  renderChart($('#chartPeriod')?.value || 'Last 6 months');
+}
+function buildChartPath(values, width = 660, height = 230, padding = { top: 18, right: 8, bottom: 18, left: 0 }) {
+  const max = 100;
+  const min = 0;
+  const innerWidth = width - padding.left - padding.right;
+  const innerHeight = height - padding.top - padding.bottom;
+  const stepX = innerWidth / Math.max(values.length - 1, 1);
+  const points = values.map((value, index) => {
+    const x = padding.left + index * stepX;
+    const y = height - padding.bottom - ((value - min) / (max - min || 1)) * innerHeight;
+    return { x, y };
+  });
+
+  let path = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i += 1) {
+    const prev = points[i - 1];
+    const current = points[i];
+    const cpX = (prev.x + current.x) / 2;
+    path += ` Q ${prev.x} ${prev.y} ${cpX} ${(prev.y + current.y) / 2} T ${current.x} ${current.y}`;
+  }
+  return path;
+}
+function renderChart(period) {
+  const values = CHART_DATA[period] || CHART_DATA['Last 6 months'];
+  const linePath = $('.chart-line');
+  const areaPath = $('.chart-fill');
+  const line = buildChartPath(values);
+  const area = `${line} L 652 230 L 0 230 Z`;
+  if (linePath) linePath.setAttribute('d', line);
+  if (areaPath) areaPath.setAttribute('d', area);
+}
 function applyTheme(themeMode) {
   const isDark = themeMode === 'dark';
   document.documentElement.setAttribute('data-theme', themeMode);
@@ -87,6 +127,7 @@ function renderToday() { $('#todayLabel').textContent = new Intl.DateTimeFormat(
 function updateChartPeriod(period) {
   const labels = period === 'This term' ? ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'] : ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
   $$('.x-labels span').forEach((label, index) => { label.textContent = labels[index]; });
+  renderChart(period);
   showToast(`Chart updated for ${period.toLowerCase()}.`);
 }
 function openModal(id = null) {
