@@ -10,6 +10,10 @@ let students = JSON.parse(localStorage.getItem(STORAGE_KEY)) || seedStudents;
 let activeDirectory = false;
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
+const bindIfExists = (selector, eventName, handler) => {
+  const element = $(selector);
+  if (element) element.addEventListener(eventName, handler);
+};
 
 function saveStudents() { localStorage.setItem(STORAGE_KEY, JSON.stringify(students)); }
 function resultFor(student) {
@@ -30,9 +34,18 @@ function populateClassFilters() {
   });
 }
 function getFilteredStudents(directory = false) {
-  const search = $(`#${directory ? 'directorySearch' : 'studentSearch'}`).value.toLowerCase().trim();
-  const grade = $(`#${directory ? 'directoryClassFilter' : 'classFilter'}`).value;
-  const status = $(`#${directory ? 'directoryStatusFilter' : 'statusFilter'}`).value;
+  const searchInput = $(`#${directory ? 'directorySearch' : 'studentSearch'}`);
+  const gradeSelect = $(`#${directory ? 'directoryClassFilter' : 'classFilter'}`);
+  const statusSelect = $(`#${directory ? 'directoryStatusFilter' : 'statusFilter'}`);
+
+  if (!searchInput && !gradeSelect && !statusSelect) {
+    return students;
+  }
+
+  const search = (searchInput?.value || '').toLowerCase().trim();
+  const grade = gradeSelect?.value || 'all';
+  const status = statusSelect?.value || 'all';
+
   return students.filter(student => {
     const result = resultFor(student);
     return (!search || student.fullName.toLowerCase().includes(search) || student.rollNumber.toLowerCase().includes(search)) && (grade === 'all' || student.grade === grade) && (status === 'all' || result.status === status);
@@ -45,10 +58,15 @@ function rowMarkup(student) {
 function renderTables() {
   const filtered = getFilteredStudents(false);
   const directoryFiltered = getFilteredStudents(true);
-  $('#studentTableBody').innerHTML = filtered.slice(0, 5).map(rowMarkup).join('');
-  $('#directoryTableBody').innerHTML = directoryFiltered.map(rowMarkup).join('');
-  $('#emptyState').hidden = filtered.length > 0;
-  $('#resultCount').textContent = `Showing ${filtered.length} student${filtered.length === 1 ? '' : 's'}`;
+  const studentTableBody = $('#studentTableBody');
+  const directoryTableBody = $('#directoryTableBody');
+  const emptyState = $('#emptyState');
+  const resultCount = $('#resultCount');
+
+  if (studentTableBody) studentTableBody.innerHTML = filtered.slice(0, 5).map(rowMarkup).join('');
+  if (directoryTableBody) directoryTableBody.innerHTML = directoryFiltered.map(rowMarkup).join('');
+  if (emptyState) emptyState.hidden = filtered.length > 0;
+  if (resultCount) resultCount.textContent = `Showing ${filtered.length} student${filtered.length === 1 ? '' : 's'}`;
   $$('.edit-student').forEach(button => button.addEventListener('click', () => openModal(button.dataset.id)));
 }
 function renderMetrics() {
@@ -149,27 +167,55 @@ function submitStudent(event) {
   saveStudents(); closeModal(); render(); showToast(existingIndex >= 0 ? 'Student record updated.' : 'Student added to the directory.');
 }
 function deleteStudent() { const id = $('#studentId').value; const student = students.find(item => item.id === id); if (!student || !window.confirm(`Delete ${student.fullName}'s record?`)) return; students = students.filter(item => item.id !== id); saveStudents(); closeModal(); render(); showToast('Student record deleted.'); }
-function showToast(message) { const toast = $('#toast'); toast.textContent = message; toast.classList.add('show'); clearTimeout(window.toastTimer); window.toastTimer = setTimeout(() => toast.classList.remove('show'), 2600); }
+function showToast(message) {
+  const toast = $('#toast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(window.toastTimer);
+  window.toastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+}
 function exportCsv() { const header = ['Full Name', 'Roll Number', 'Class', 'Section', 'Email', 'Date of Birth', ...SUBJECTS, 'Total Marks', 'Percentage', 'Grade', 'Status']; const rows = students.map(student => { const result = resultFor(student); return [student.fullName, student.rollNumber, student.grade, student.section, student.email, student.dateOfBirth, ...SUBJECTS.map(subject => student.marks[subject]), result.total, result.percentage.toFixed(1), result.grade, result.status === 'pass' ? 'Passed' : 'Needs attention']; }); const csv = [header, ...rows].map(row => row.map(value => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n'); const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); link.download = 'scholara-student-results.csv'; link.click(); URL.revokeObjectURL(link.href); showToast('CSV export downloaded.'); }
 function printClass() { $('#printReport').innerHTML = `<h1>Northbridge Academy · Class Results</h1><div class="print-meta">Generated ${new Date().toLocaleDateString()}</div><table class="print-table"><thead><tr><th>Student</th><th>Roll number</th><th>Class</th><th>Total / 400</th><th>Percentage</th><th>Grade</th><th>Status</th></tr></thead><tbody>${students.map(student => { const result = resultFor(student); return `<tr><td>${student.fullName}</td><td>${student.rollNumber}</td><td>${student.grade} ${student.section}</td><td>${result.total}</td><td>${result.percentage.toFixed(1)}%</td><td>${result.grade}</td><td class="print-badge">${result.status === 'pass' ? 'Passed' : 'Needs attention'}</td></tr>`; }).join('')}</tbody></table>`; window.print(); }
 function printStudent(id) { const student = students.find(item => item.id === id); if (!student) return; const result = resultFor(student); $('#printReport').innerHTML = `<div class="single-report"><div class="student-heading"><div><h1>Northbridge Academy</h1><div class="print-meta">Student report card · ${new Date().toLocaleDateString()}</div></div><strong>${student.rollNumber}</strong></div><h2>${student.fullName}</h2><div class="print-meta">${student.grade} · Section ${student.section} · ${student.email}</div><table class="print-table"><thead><tr><th>Subject</th><th>Marks</th></tr></thead><tbody>${SUBJECTS.map(subject => `<tr><td>${subject}</td><td>${student.marks[subject]} / 100</td></tr>`).join('')}</tbody></table><div class="result-box"><div><span>Total</span><strong>${result.total}/400</strong></div><div><span>Percentage</span><strong>${result.percentage.toFixed(1)}%</strong></div><div><span>Grade</span><strong>${result.grade}</strong></div><div><span>Status</span><strong>${result.status === 'pass' ? 'Passed' : 'Needs attention'}</strong></div></div><div class="signature">Class teacher</div></div>`; window.print(); }
 function switchView(view) { $$('.page-view').forEach(section => section.classList.toggle('active', section.id === `${view}View`)); $$('.nav-item').forEach(item => item.classList.toggle('active', item.dataset.view === view)); $('#breadcrumb-current').textContent = view[0].toUpperCase() + view.slice(1); }
 
 $$('.nav-item').forEach(item => item.addEventListener('click', () => switchView(item.dataset.view)));
-['addStudentTop', 'addStudentHero', 'addStudentDirectory', 'addClassStudent'].forEach(id => $(`#${id}`).addEventListener('click', () => openModal()));
-$('#closeModal').addEventListener('click', closeModal); $('#cancelModal').addEventListener('click', closeModal); $('#studentForm').addEventListener('submit', submitStudent); $('#deleteStudentBtn').addEventListener('click', deleteStudent); $$('.mark-input').forEach(input => input.addEventListener('input', updateMarksPreview));
-['studentSearch', 'classFilter', 'statusFilter', 'directorySearch', 'directoryClassFilter', 'directoryStatusFilter'].forEach(id => $(`#${id}`).addEventListener('input', renderTables));
-$('#resetFilters').addEventListener('click', () => { $('#studentSearch').value = ''; $('#classFilter').value = 'all'; $('#statusFilter').value = 'all'; renderTables(); });
-$('#exportCsvTop').addEventListener('click', exportCsv); $('#printClassBtn').addEventListener('click', printClass); $('#printReportsBtn').addEventListener('click', printClass); $('#viewReportsBtn').addEventListener('click', () => switchView('reports')); $('#viewAllStudents').addEventListener('click', () => switchView('students'));
-$('#notificationBtn').addEventListener('click', () => showToast('You have no new notifications.'));
-$('#helpBtn').addEventListener('click', () => showToast('Use Add student to create a record, then enter marks to calculate results.'));
-$('#accountBtn').addEventListener('click', () => showToast('Signed in as Administrator.'));
-$('#gradeOptionsBtn').addEventListener('click', () => showToast('Grade breakdown is calculated from all saved student results.'));
-$('#themeToggle').addEventListener('click', () => {
+['addStudentTop', 'addStudentHero', 'addStudentDirectory', 'addClassStudent'].forEach(id => bindIfExists(`#${id}`, 'click', () => openModal()));
+bindIfExists('#closeModal', 'click', closeModal);
+bindIfExists('#cancelModal', 'click', closeModal);
+bindIfExists('#studentForm', 'submit', submitStudent);
+bindIfExists('#deleteStudentBtn', 'click', deleteStudent);
+$$('.mark-input').forEach(input => input.addEventListener('input', updateMarksPreview));
+['studentSearch', 'classFilter', 'statusFilter', 'directorySearch', 'directoryClassFilter', 'directoryStatusFilter'].forEach(id => {
+  bindIfExists(`#${id}`, 'input', renderTables);
+});
+const resetFiltersButton = $('#resetFilters');
+if (resetFiltersButton) {
+  resetFiltersButton.addEventListener('click', () => {
+    const studentSearch = $('#studentSearch');
+    const classFilter = $('#classFilter');
+    const statusFilter = $('#statusFilter');
+    if (studentSearch) studentSearch.value = '';
+    if (classFilter) classFilter.value = 'all';
+    if (statusFilter) statusFilter.value = 'all';
+    renderTables();
+  });
+}
+bindIfExists('#exportCsvTop', 'click', exportCsv);
+bindIfExists('#printClassBtn', 'click', printClass);
+bindIfExists('#printReportsBtn', 'click', printClass);
+bindIfExists('#viewReportsBtn', 'click', () => switchView('reports'));
+bindIfExists('#viewAllStudents', 'click', () => switchView('students'));
+bindIfExists('#notificationBtn', 'click', () => showToast('You have no new notifications.'));
+bindIfExists('#helpBtn', 'click', () => showToast('Use Add student to create a record, then enter marks to calculate results.'));
+bindIfExists('#accountBtn', 'click', () => showToast('Signed in as Administrator.'));
+bindIfExists('#gradeOptionsBtn', 'click', () => showToast('Grade breakdown is calculated from all saved student results.'));
+bindIfExists('#themeToggle', 'click', () => {
   const nextTheme = document.body.classList.contains('dark-mode') ? 'light' : 'dark';
   applyTheme(nextTheme);
 });
-$('#chartPeriod').addEventListener('change', event => updateChartPeriod(event.target.value));
-$('#studentModal').addEventListener('click', event => { if (event.target.id === 'studentModal') closeModal(); });
+bindIfExists('#chartPeriod', 'change', event => updateChartPeriod(event.target.value));
+bindIfExists('#studentModal', 'click', event => { if (event.target.id === 'studentModal') closeModal(); });
 initializeTheme();
 renderToday(); render();
