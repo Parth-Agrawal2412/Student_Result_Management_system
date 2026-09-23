@@ -66,6 +66,11 @@ function renderReports() {
 }
 function render() { populateClassFilters(); renderMetrics(); renderTables(); renderReports(); }
 function renderToday() { $('#todayLabel').textContent = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }).format(new Date()); }
+function updateChartPeriod(period) {
+  const labels = period === 'This term' ? ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'] : ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep'];
+  $$('.x-labels span').forEach((label, index) => { label.textContent = labels[index]; });
+  showToast(`Chart updated for ${period.toLowerCase()}.`);
+}
 function openModal(id = null) {
   const student = students.find(item => item.id === id);
   $('#studentForm').reset(); $('#studentId').value = id || ''; $('#modalTitle').textContent = student ? 'Edit student' : 'Add student'; $('#modalEyebrow').textContent = student ? 'Student record' : 'New record'; $('#deleteStudentBtn').hidden = !student;
@@ -97,5 +102,10 @@ $('#closeModal').addEventListener('click', closeModal); $('#cancelModal').addEve
 ['studentSearch', 'classFilter', 'statusFilter', 'directorySearch', 'directoryClassFilter', 'directoryStatusFilter'].forEach(id => $(`#${id}`).addEventListener('input', renderTables));
 $('#resetFilters').addEventListener('click', () => { $('#studentSearch').value = ''; $('#classFilter').value = 'all'; $('#statusFilter').value = 'all'; renderTables(); });
 $('#exportCsvTop').addEventListener('click', exportCsv); $('#printClassBtn').addEventListener('click', printClass); $('#printReportsBtn').addEventListener('click', printClass); $('#viewReportsBtn').addEventListener('click', () => switchView('reports')); $('#viewAllStudents').addEventListener('click', () => switchView('students'));
+$('#notificationBtn').addEventListener('click', () => showToast('You have no new notifications.'));
+$('#helpBtn').addEventListener('click', () => showToast('Use Add student to create a record, then enter marks to calculate results.'));
+$('#accountBtn').addEventListener('click', () => showToast('Signed in as Administrator.'));
+$('#gradeOptionsBtn').addEventListener('click', () => showToast('Grade breakdown is calculated from all saved student results.'));
+$('#chartPeriod').addEventListener('change', event => updateChartPeriod(event.target.value));
 $('#studentModal').addEventListener('click', event => { if (event.target.id === 'studentModal') closeModal(); });
 renderToday(); render();

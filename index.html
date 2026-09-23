@@ -37,7 +37,7 @@
         <div class="profile-card">
           <div class="avatar avatar-indigo">A</div>
           <div><strong>Administrator</strong><small>Admin workspace</small></div>
-          <button class="icon-btn" aria-label="Open account menu">⌄</button>
+          <button class="icon-btn" id="accountBtn" aria-label="Open account menu">⌄</button>
         </div>
       </div>
     </aside>
@@ -46,8 +46,8 @@
       <header class="topbar">
         <div class="breadcrumbs"><span>Workspace</span><b>/</b><strong id="breadcrumb-current">Overview</strong></div>
         <div class="topbar-actions">
-          <button class="icon-btn notification" aria-label="Notifications">♢<i></i></button>
-          <button class="help-btn">?</button>
+          <button class="icon-btn notification" id="notificationBtn" aria-label="Notifications">♢<i></i></button>
+          <button class="help-btn" id="helpBtn" aria-label="Help">?</button>
           <button class="outline-btn" id="exportCsvTop"><span>⇩</span> Export data</button>
           <button class="primary-btn" id="addStudentTop"><span>＋</span> Add student</button>
         </div>
@@ -68,7 +68,7 @@
 
         <div class="content-grid">
           <article class="panel chart-panel"><div class="panel-heading"><div><h2>Performance overview</h2><p class="muted">Average student score across subjects</p></div><select id="chartPeriod" class="select compact"><option>Last 6 months</option><option>This term</option></select></div><div class="chart-wrap"><div class="y-labels"><span>100</span><span>75</span><span>50</span><span>25</span><span>0</span></div><div class="chart-area"><div class="grid-lines"><i></i><i></i><i></i><i></i><i></i></div><svg class="line-chart" viewBox="0 0 660 230" preserveAspectRatio="none" aria-label="Performance trend chart"><defs><linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#6171e8" stop-opacity=".22"/><stop offset="1" stop-color="#6171e8" stop-opacity="0"/></linearGradient></defs><path class="chart-fill" d="M0,145 C50,136 76,148 108,124 S160,111 194,126 S246,83 278,99 S332,112 360,76 S414,55 447,79 S494,98 528,58 S587,33 620,45 S646,26 660,16 L660,230 L0,230 Z"/><path class="chart-line" d="M0,145 C50,136 76,148 108,124 S160,111 194,126 S246,83 278,99 S332,112 360,76 S414,55 447,79 S494,98 528,58 S587,33 620,45 S646,26 660,16"/><circle cx="528" cy="58" r="5" class="chart-dot"/></svg><div class="x-labels"><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span></div></div></div></article>
-          <article class="panel breakdown-panel"><div class="panel-heading"><div><h2>Grade breakdown</h2><p class="muted">Current class distribution</p></div><button class="icon-btn" aria-label="More grade breakdown options">•••</button></div><div class="donut-row"><div class="donut" id="gradeDonut"><div><strong id="donutValue">0%</strong><span>avg. score</span></div></div><div class="legend" id="gradeLegend"></div></div><div class="panel-footer"><span>Updated just now</span><button class="text-btn" id="viewReportsBtn">View reports <span>→</span></button></div></article>
+          <article class="panel breakdown-panel"><div class="panel-heading"><div><h2>Grade breakdown</h2><p class="muted">Current class distribution</p></div><button class="icon-btn" id="gradeOptionsBtn" aria-label="More grade breakdown options">•••</button></div><div class="donut-row"><div class="donut" id="gradeDonut"><div><strong id="donutValue">0%</strong><span>avg. score</span></div></div><div class="legend" id="gradeLegend"></div></div><div class="panel-footer"><span>Updated just now</span><button class="text-btn" id="viewReportsBtn">View reports <span>→</span></button></div></article>
         </div>
 
         <section class="panel students-panel"><div class="panel-heading"><div><h2>Student results</h2><p class="muted">Review and manage the latest results</p></div><button class="text-btn" id="viewAllStudents">View all students <span>→</span></button></div><div class="toolbar"><label class="search-box"><span>⌕</span><input id="studentSearch" type="search" placeholder="Search by name or roll number..." /></label><select class="select" id="classFilter"><option value="all">All classes</option></select><select class="select" id="statusFilter"><option value="all">All results</option><option value="pass">Passed</option><option value="fail">Needs attention</option></select><button class="filter-btn" id="resetFilters">↺ <span>Reset</span></button></div><div class="table-wrap"><table><thead><tr><th>Student</th><th>Roll number</th><th>Class</th><th>Average</th><th>Status</th><th></th></tr></thead><tbody id="studentTableBody"></tbody></table><div class="empty-state" id="emptyState" hidden>No students match these filters.</div></div><div class="table-pagination"><span id="resultCount">Showing 0 students</span><div><button class="page-btn" disabled>‹</button><button class="page-btn active">1</button><button class="page-btn" disabled>›</button></div></div></section>
